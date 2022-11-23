@@ -1,0 +1,52 @@
+.puzzleContainer{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+.heading{
+  margin: 10px 0;
+  color: #3aa0f1;
+}
+.puzzleBox{
+    border: 10px solid #3aa0f1;
+    border-radius: 10px;
+    cursor: pointer;
+    max-width: 280px;
+    width: 100%;
+
+}
+
+
+.chooseFile {
+    display: none;
+  }
+  label {
+    color: white;
+    background-color: #3aa0f1;
+    font-size: 20px;
+    text-align: center;
+    padding: 20px 30px;
+    cursor: pointer;
+    margin-bottom: 50px;
+  }
+  label:hover {
+    background-color: #2c85c9;
+  }
+
+  
+@media screen and (max-width: 300px) {
+  .puzzleBox{
+    border:none
+  }
+
+  label{
+    font-size: 15px;
+    padding: 15px 22px;
+    margin-bottom: 30px;
+  }
+}
