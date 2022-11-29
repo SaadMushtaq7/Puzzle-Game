@@ -14,8 +14,8 @@ const JigsawPuzzle = () => {
       try {
         Resizer.imageFileResizer(
           event.target.files[0],
-          350,
-          320,
+          330,
+          300,
           "JPEG",
           100,
           0,
@@ -23,8 +23,8 @@ const JigsawPuzzle = () => {
             setImgUrl(uri);
           },
           "base64",
-          350,
-          320
+          330,
+          300
         );
       } catch (err) {
         console.log(err);
@@ -53,7 +53,7 @@ const JigsawPuzzle = () => {
               src={imgUrl}
               columnsCount={3}
               rowsCount={3}
-              height={300}
+              height={317}
               width={350}
               onFinish={() => setSuccess(true)}
             >
@@ -62,7 +62,7 @@ const JigsawPuzzle = () => {
           </div>
           <div className="realImage">
             <h2>Actual Image</h2>
-            <img src={imgUrl} alt="" />
+            <img src={imgUrl} alt="" width="350px" height="340px" />
           </div>
         </div>
       )}
