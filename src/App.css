@@ -35,10 +35,9 @@ width: 100vw;
   }
 .puzzleBox{
     border: 5px solid #3aa0f1;
-    
     cursor: pointer;
     max-width: 350px;
-    height: 350px;
+    height: 355px;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -48,7 +47,7 @@ width: 100vw;
 .realImage{
   max-width: 350px;
   width: 100%;
-  height:350px;
+  height:355px;
   margin-left: 20px;
   display: flex;
   flex-direction: column;
@@ -92,7 +91,9 @@ width: 100vw;
   .puzzleBox{
     border:none
   }
-
+  .realImage{
+    border: none;
+  }
   label{
     font-size: 15px;
     padding: 15px 22px;
