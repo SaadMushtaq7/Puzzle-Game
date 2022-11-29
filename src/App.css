@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
+
 .puzzleContainer{
     width: 100%;
     height: 100%;
@@ -49,4 +51,17 @@
     padding: 15px 22px;
     margin-bottom: 30px;
   }
+}
+
+.modal{
+  min-height: 150px;
+  text-align: center;
+  color: #2c85c9;
+  font-size: 17px;
+  font-weight: bold;
+  font-family: 'Silkscreen', cursive;
+}
+
+.modal span{
+  font-weight: normal;
 }

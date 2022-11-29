@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { Puzzle, PuzzleGame } from "react-puzzle-game";
 import Resizer from "react-image-file-resizer";
+import Popup from "reactjs-popup";
 import { RiImageAddFill } from "react-icons/ri";
+import "reactjs-popup/dist/index.css";
 
 const JigsawPuzzle = () => {
   const [imgUrl, setImgUrl] = useState<any>();
+  const [success, setSuccess] = useState<boolean>(false);
 
   const fileChangedHandler = (event: any) => {
     if (event.target.files[0]) {
@@ -50,12 +53,23 @@ const JigsawPuzzle = () => {
             rowsCount={3}
             height={280}
             width={280}
-            onFinish={() => alert("Finished!!")}
+            onFinish={() => setSuccess(true)}
           >
             <Puzzle />
           </PuzzleGame>
         </span>
       )}
+      <Popup
+        modal
+        open={success}
+        onClose={() => setSuccess(false)}
+        position="right center"
+      >
+        <div className="modal">
+          Congrats! <br />
+          <span>On the Successfull completion of the puzzle</span>
+        </div>
+      </Popup>
     </div>
   );
 };
