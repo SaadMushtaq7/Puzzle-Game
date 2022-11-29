@@ -14,17 +14,15 @@ const JigsawPuzzle = () => {
       try {
         Resizer.imageFileResizer(
           event.target.files[0],
-          300,
-          300,
+          350,
+          320,
           "JPEG",
           100,
           0,
           (uri) => {
             setImgUrl(uri);
           },
-          "base64",
-          320,
-          320
+          "base64"
         );
       } catch (err) {
         console.log(err);
@@ -46,18 +44,25 @@ const JigsawPuzzle = () => {
         <RiImageAddFill width={"20px"} height={"20px"} /> Choose a Photo
       </label>
       {imgUrl && (
-        <span className="puzzleBox">
-          <PuzzleGame
-            src={imgUrl}
-            columnsCount={3}
-            rowsCount={3}
-            height={280}
-            width={280}
-            onFinish={() => setSuccess(true)}
-          >
-            <Puzzle />
-          </PuzzleGame>
-        </span>
+        <div className="mainPuzzleContainer">
+          <div className="puzzleBox">
+            <h2>Puzzle</h2>
+            <PuzzleGame
+              src={imgUrl}
+              columnsCount={3}
+              rowsCount={3}
+              height={300}
+              width={350}
+              onFinish={() => setSuccess(true)}
+            >
+              <Puzzle />
+            </PuzzleGame>
+          </div>
+          <div className="realImage">
+            <h2>Actual Image</h2>
+            <img src={imgUrl} alt="" />
+          </div>
+        </div>
       )}
       <Popup
         modal
