@@ -22,7 +22,9 @@ const JigsawPuzzle = () => {
           (uri) => {
             setImgUrl(uri);
           },
-          "base64"
+          "base64",
+          350,
+          320
         );
       } catch (err) {
         console.log(err);
