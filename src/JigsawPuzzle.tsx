@@ -237,8 +237,8 @@ const CamPuzzle = () => {
     y: 0,
     width: 0,
     height: 0,
-    rows: 4,
-    columns: 4,
+    rows: 2,
+    columns: 2,
   });
 
   const [success, setSuccess] = useState<boolean>(false);
@@ -474,6 +474,12 @@ const CamPuzzle = () => {
 
   const setDifficulty = (e: any) => {
     switch (e.target.value) {
+      case "2x2":
+        initializePieces(2, 2);
+        break;
+      case "3x3":
+        initializePieces(3, 3);
+        break;
       case "4x4":
         initializePieces(4, 4);
         break;
@@ -602,16 +608,18 @@ const CamPuzzle = () => {
             Difficulty
             <br />
             <select id="difficulty" onChange={(e) => setDifficulty(e)}>
-              <option value="4x4">4x4</option>
-              <option value="5x5">5x5</option>
-              <option value="6x6">6x6</option>
-              <option value="7x7">7x7</option>
-              <option value="8x8">8x8</option>
-              <option value="9x9">9x9</option>
-              <option value="10x10">10x10</option>
-              <option value="11x11">11x11</option>
-              <option value="12x12">12x12</option>
-              <option value="13x13">13x13</option>
+              <option value="2x2">2 x 2</option>
+              <option value="3x3">3 x 3</option>
+              <option value="4x4">4 x 4</option>
+              <option value="5x5">5 x 5</option>
+              <option value="6x6">6 x 6</option>
+              <option value="7x7">7 x 7</option>
+              <option value="8x8">8 x 8</option>
+              <option value="9x9">9 x 9</option>
+              <option value="10x10">10 x 10</option>
+              <option value="11x11">11 x 11</option>
+              <option value="12x12">12 x 12</option>
+              <option value="13x13">13 x 13</option>
             </select>
             <br />
             <br />
