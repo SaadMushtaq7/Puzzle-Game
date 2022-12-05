@@ -294,8 +294,8 @@ const CamPuzzle = () => {
       if (isComplete()) {
         setTimeout(() => {
           completeApplauseAudio.play();
-        }, 500);
-        setSuccess(true);
+          setSuccess(true);
+        }, 1000);
       }
     }
     selectedPiece.current = null;
@@ -394,13 +394,10 @@ const CamPuzzle = () => {
     helperCanvasRef.current.height = window.innerHeight;
 
     let resizer =
-      scaler *
-      Math.min(
-        window.innerWidth / imgRef.current.width,
-        window.innerHeight / imgRef.current.height
-      );
-    sizeRef.current.width = resizer * imgRef.current.width;
-    sizeRef.current.height = resizer * imgRef.current.height;
+      scaler * Math.min(window.innerWidth / 500, window.innerHeight / 630);
+
+    sizeRef.current.width = resizer * 500;
+    sizeRef.current.height = resizer * 630;
     sizeRef.current.x = window.innerWidth / 2 - sizeRef.current.width / 2;
     sizeRef.current.y = window.innerHeight / 2 - sizeRef.current.height / 2;
   }, []);
@@ -518,7 +515,7 @@ const CamPuzzle = () => {
   const restart = () => {
     randomizePieces();
     itemsRef.current.style.display = "none";
-    topButtonsRef.current.style.display = "block";
+    topButtonsRef.current.style.display = "flex";
   };
 
   const fileChangedHandler = (event: any) => {
@@ -526,17 +523,20 @@ const CamPuzzle = () => {
       try {
         Resizer.imageFileResizer(
           event.target.files[0],
-          330,
-          300,
+          500,
+          630,
           "JPEG",
           100,
           0,
           (uri) => {
             setImgUrl(uri);
+            handleResizer();
+            initializePieces(sizeRef.current.rows, sizeRef.current.columns);
+            updateCanvas();
           },
           "base64",
-          330,
-          300
+          500,
+          630
         );
       } catch (err) {
         console.log(err);
@@ -561,21 +561,21 @@ const CamPuzzle = () => {
     // window.addEventListener("resize", handleResizer);
   }, [updateCanvas, handleResizer, addEventListeners, initializePieces]);
 
-  useEffect(() => {
-    window.onload = () => {
-      if (!window.location.hash) {
-        //@ts-ignore
-        window.location.hash = "game";
-        window.location.reload();
-      }
-    };
-  }, []);
+  // useEffect(() => {
+  //   window.onload = () => {
+  //     if (!window.location.hash) {
+  //       //@ts-ignore
+  //       window.location.hash = "game";
+  //       window.location.reload();
+  //     }
+  //   };
+  // }, []);
 
   return (
     <div className="mainContainer">
       <div className="topButtons" ref={topButtonsRef}>
         <button onClick={restart} className="startAgainBtn">
-          Start Again?
+          Play Again
         </button>
 
         <button
@@ -593,11 +593,7 @@ const CamPuzzle = () => {
         <canvas ref={helperCanvasRef} style={{ display: "none" }} />
         <img
           ref={imgRef}
-          src={
-            imgUrl
-              ? imgUrl
-              : "https://images.unsplash.com/photo-1669908923467-f50d53f884b9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1887&q=80"
-          }
+          src={imgUrl ? imgUrl : "/images/backupPuzzle.jpg"}
           alt="Puzzle display"
         />
       </>
@@ -640,7 +636,11 @@ const CamPuzzle = () => {
       <Popup
         modal
         open={success}
-        onClose={() => setSuccess(false)}
+        onClose={() => {
+          itemsRef.current.style.display = "block";
+          topButtonsRef.current.style.display = "none";
+          setSuccess(false);
+        }}
         position="right center"
       >
         <div className="modal">
@@ -652,6 +652,8 @@ const CamPuzzle = () => {
       </Popup>
     </div>
   );
+
+  //<img src="/gif/loading.gif" alt="" />
 };
 
 export default CamPuzzle;

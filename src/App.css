@@ -5,11 +5,14 @@ body{
   padding: 0;
  overflow: hidden; 
  overscroll-behavior: none;
+ 
 }
 
 
-video,img{
-  display: none;
+
+.mainContainer{
+   background: linear-gradient(to bottom, #33ccff 0%, #3366cc 100%);
+  
 }
 
 #menuItems{
@@ -17,18 +20,29 @@ video,img{
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
+  
   background-color: rgba(255, 255, 255, 0.6);
   text-align: center;
   padding: 5vmin;
   border: 1vmin #0065c8 solid;
   font-size: 7vmin;
   color: #0065c8;
+  z-index: 1000;
+}
+
+.topButtons{
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: fit-content;
+  padding: 0;
 }
 
 
 button{
   font-size: 4vmin;
-  padding: 2vmin 3vmin;
+  padding: 7px 20px;
   background-color: #3aa0f1;
   color: #fff;
   border: none;
@@ -41,18 +55,30 @@ button:hover{
   background-color: #0065c8;
 }
 
+
 button.startAgainBtn{
-  position: absolute;
-  top: 10px;
-  left: 70%;
-  transform: translate(-70%);
+  background-color: white;
+  color: #0065c8;
+  font-family: 'Silkscreen',cursive;
+  font-size: 14px;
+  margin-top: 20px;
+  padding: 7px 20px;
 }
 
 button.newGameBtn{
-  position: absolute;
-  top: 10px;
-  left: 30%;
-  transform: translate(-30%);
+  
+  background-color: white;
+  color: #0065c8;
+  font-family: 'Silkscreen',cursive;
+  font-size: 14px;
+  padding: 7px 20px;
+  margin-top: 20px;
+  margin-left: 10px;
+}
+
+button.newGameBtn:hover, button.startAgainBtn:hover{
+  background-color: #0065c8;
+  color: white;
 }
 
 select{
@@ -62,9 +88,7 @@ select{
   border: none;
   outline: none;
   border-radius: 1vmin;
-     
 }
-
 
 .modal{
   min-height: 150px;
@@ -86,7 +110,7 @@ select{
   position: absolute;
   top: 50px;
   left: 20%;
-  transform: translate(-30%);
+  transform: translate(-20%);
 }
 
 .chooseFile {
@@ -104,3 +128,4 @@ label {
 label:hover {
   background-color: #2c85c9;
 }
+
