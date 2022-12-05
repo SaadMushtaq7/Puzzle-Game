@@ -530,8 +530,19 @@ const CamPuzzle = () => {
       updateCanvas();
     }
     itemsRef.current.style.display = "block";
-    window.addEventListener("resize", handleResizer);
+
+    // window.addEventListener("resize", handleResizer);
   }, [updateCanvas, handleResizer, addEventListeners, initializePieces]);
+
+  useEffect(() => {
+    window.onload = () => {
+      if (!window.location.hash) {
+        //@ts-ignore
+        window.location.hash = "game";
+        window.location.reload();
+      }
+    };
+  }, []);
 
   return (
     <div className="mainContainer">
@@ -543,6 +554,7 @@ const CamPuzzle = () => {
         <button
           onClick={() => {
             itemsRef.current.style.display = "block";
+            initializePieces(sizeRef.current.rows, sizeRef.current.columns);
           }}
           className="newGameBtn"
         >
