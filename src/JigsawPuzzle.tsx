@@ -237,8 +237,8 @@ const CamPuzzle = () => {
     y: 0,
     width: 0,
     height: 0,
-    rows: 3,
-    columns: 3,
+    rows: 4,
+    columns: 4,
   });
 
   const [success, setSuccess] = useState<boolean>(false);
@@ -474,17 +474,38 @@ const CamPuzzle = () => {
 
   const setDifficulty = (e: any) => {
     switch (e.target.value) {
-      case "easy":
-        initializePieces(3, 3);
+      case "4x4":
+        initializePieces(4, 4);
         break;
-      case "medium":
+      case "5x5":
         initializePieces(5, 5);
         break;
-      case "hard":
+      case "6x6":
+        initializePieces(6, 6);
+        break;
+      case "7x7":
+        initializePieces(7, 7);
+        break;
+      case "8x8":
+        initializePieces(8, 8);
+        break;
+      case "9x9":
+        initializePieces(9, 9);
+        break;
+      case "10x10":
         initializePieces(10, 10);
         break;
+      case "11x11":
+        initializePieces(11, 11);
+        break;
+      case "12x12":
+        initializePieces(12, 12);
+        break;
+      case "13x13":
+        initializePieces(11, 11);
+        break;
       default:
-        initializePieces(3, 3);
+        initializePieces(4, 4);
     }
   };
 
@@ -581,9 +602,16 @@ const CamPuzzle = () => {
             Difficulty
             <br />
             <select id="difficulty" onChange={(e) => setDifficulty(e)}>
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
+              <option value="4x4">4x4</option>
+              <option value="5x5">5x5</option>
+              <option value="6x6">6x6</option>
+              <option value="7x7">7x7</option>
+              <option value="8x8">8x8</option>
+              <option value="9x9">9x9</option>
+              <option value="10x10">10x10</option>
+              <option value="11x11">11x11</option>
+              <option value="12x12">12x12</option>
+              <option value="13x13">13x13</option>
             </select>
             <br />
             <br />
