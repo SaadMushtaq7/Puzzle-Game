@@ -43,7 +43,6 @@ const CamPuzzle = () => {
   const scaler = 0.8;
 
   const onMouseDown = useCallback((evt: any) => {
-    console.log(selectedPiece);
     const imgData = helperContextRef.current.getImageData(evt.x, evt.y, 1, 1);
     if (imgData.data[3] === 0) {
       return;
