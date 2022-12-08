@@ -42,7 +42,6 @@ export const randomizePieces = (
       x: Math.random() * (canvasRef.width - PIECES[i].width),
       y: Math.random() * (canvasRef.height - PIECES[i].height),
     };
-    console.log(loc);
     PIECES[i].x = loc.x;
     PIECES[i].y = loc.y;
     PIECES[i].correct = false;

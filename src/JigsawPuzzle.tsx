@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useCallback, useState } from "react";
 import Resizer from "react-image-file-resizer";
-import Popup from "reactjs-popup";
-import { RiImageAddFill } from "react-icons/ri";
 import {
   handleResizer,
   getRandomColor,
@@ -9,10 +7,12 @@ import {
   getPressedPieceByColor,
   isComplete,
   getDifficulty,
-  difficultyLevel,
 } from "./helperFunctions";
 import Piece from "./Piece";
-import "reactjs-popup/dist/index.css";
+import ControlButtons from "./components/ControlButtons";
+import MenuModal from "./components/MenuModal";
+import SuccessModal from "./components/SuccessModal";
+import CanvasImage from "./components/CanvasImage";
 
 const completeApplauseAudio = new Audio("/audio/applause.wav");
 completeApplauseAudio.volume = 0.2;
@@ -265,7 +265,6 @@ const CamPuzzle = () => {
   };
 
   useEffect(() => {
-    console.log(selectedPiece);
     if (!contextRef.current && !helperContextRef.current) {
       contextRef.current = canvasRef.current.getContext("2d");
       helperContextRef.current = helperCanvasRef.current.getContext("2d");
@@ -288,76 +287,31 @@ const CamPuzzle = () => {
 
   return (
     <div className="mainContainer" ref={mainContainerRef}>
-      <div className="topButtons" ref={topButtonsRef}>
-        <button onClick={restart} className="startAgainBtn">
-          Play Again
-        </button>
-
-        <button
-          onClick={() => {
-            itemsRef.current.style.display = "block";
-            initializePieces(sizeRef.current.rows, sizeRef.current.columns);
-          }}
-          className="newGameBtn"
-        >
-          New Game
-        </button>
-      </div>
-      <>
-        <canvas ref={canvasRef} width="500px" />
-        <canvas ref={helperCanvasRef} style={{ display: "none" }} />
-        <img
-          ref={imgRef}
-          src={imgUrl ? imgUrl : "/images/backupPuzzle.jpg"}
-          alt="Puzzle display"
-        />
-      </>
-
-      <div id="menuItems" ref={itemsRef}>
-        <div id="menu">
-          <div id="controls">
-            Difficulty
-            <br />
-            <select id="difficulty" onChange={(e) => setDifficulty(e)}>
-              {difficultyLevel.map((difficulty) => (
-                <option key={difficulty} value={difficulty}>
-                  {difficulty}
-                </option>
-              ))}
-            </select>
-            <br />
-            <br />
-            <button onClick={restart}>Start</button>
-          </div>
-        </div>
-        <input
-          className="chooseFile"
-          type="file"
-          id="file"
-          accept="image/*"
-          onChange={(e) => fileChangedHandler(e)}
-        />
-        <label htmlFor="file">
-          <RiImageAddFill width={"20px"} height={"20px"} /> Choose a Photo
-        </label>
-      </div>
-      <Popup
-        modal
-        open={success}
-        onClose={() => {
-          itemsRef.current.style.display = "block";
-          topButtonsRef.current.style.display = "none";
-          setSuccess(false);
-        }}
-        position="right center"
-      >
-        <div className="modal">
-          <>
-            Congrats! <br />
-            <span>On the Successfull completion of the puzzle!</span>
-          </>
-        </div>
-      </Popup>
+      <ControlButtons
+        topButtonsRef={topButtonsRef}
+        itemsRef={itemsRef.current}
+        sizeRef={sizeRef.current}
+        restart={restart}
+        initializePieces={initializePieces}
+      />
+      <CanvasImage
+        canvasRef={canvasRef}
+        helperCanvasRef={helperCanvasRef}
+        imgRef={imgRef}
+        imgUrl={imgUrl}
+      />
+      <MenuModal
+        itemsRef={itemsRef}
+        setDifficulty={setDifficulty}
+        fileChangedHandler={fileChangedHandler}
+        restart={restart}
+      />
+      <SuccessModal
+        success={success}
+        itemsRef={itemsRef.current}
+        topButtonsRef={topButtonsRef.current}
+        setSuccess={setSuccess}
+      />
     </div>
   );
 };
