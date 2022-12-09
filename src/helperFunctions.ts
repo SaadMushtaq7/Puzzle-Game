@@ -1,3 +1,109 @@
+import Piece from "./Piece";
+import Resizer from "react-image-file-resizer";
+
+const completeApplauseAudio = new Audio("/audio/applause.wav");
+completeApplauseAudio.volume = 0.2;
+
+const onMouseDown = (
+  evt: any,
+  helperContextRef: any,
+  selectedPiece: any,
+  PIECES: any
+) => {
+  const imgData = helperContextRef.current.getImageData(evt.x, evt.y, 1, 1);
+  if (imgData.data[3] === 0) {
+    return;
+  }
+
+  const clickedColor = `rgb(${imgData.data[0]},${imgData.data[1]},${imgData.data[2]})`;
+  selectedPiece.current = getPressedPieceByColor(
+    evt,
+    clickedColor,
+    PIECES.current
+  );
+
+  if (selectedPiece.current !== null) {
+    const index = PIECES.current.indexOf(selectedPiece.current);
+    if (index > -1) {
+      PIECES.current.splice(index, 1);
+      PIECES.current.push(selectedPiece.current);
+    }
+    selectedPiece.current.offset = {
+      x: evt.x - selectedPiece.current.x,
+      y: evt.y - selectedPiece.current.y,
+    };
+
+    selectedPiece.current.correct = false;
+  }
+};
+
+const onTouchStart = (
+  evt: any,
+  helperContextRef: any,
+  selectedPiece: any,
+  PIECES: any
+) => {
+  let loc = { x: evt.touches[0].clientX, y: evt.touches[0].clientY };
+  onMouseDown(loc, helperContextRef, selectedPiece, PIECES);
+};
+
+const onMouseMove = (evt: any, selectedPiece: any) => {
+  if (selectedPiece.current !== null) {
+    selectedPiece.current.x = evt.x - selectedPiece.current.offset.x;
+    selectedPiece.current.y = evt.y - selectedPiece.current.offset.y;
+  }
+};
+
+const onTouchMove = (evt: any, selectedPiece: any) => {
+  let loc = { x: evt.touches[0].clientX, y: evt.touches[0].clientY };
+  onMouseMove(loc, selectedPiece);
+};
+
+const onMouseUp = (selectedPiece: any, PIECES: any, success: any) => {
+  if (selectedPiece.current && selectedPiece.current.isClose()) {
+    selectedPiece.current.snap();
+    if (isComplete(PIECES.current)) {
+      setTimeout(() => {
+        completeApplauseAudio.play();
+        success.current = true;
+      }, 500);
+    }
+  }
+  selectedPiece.current = null;
+};
+
+const onTouchEnd = (selectedPiece: any, PIECES: any, success: any) => {
+  onMouseUp(selectedPiece, PIECES, success);
+};
+
+export const addEventListeners = (
+  canvasRef: any,
+  helperContextRef: any,
+  selectedPiece: any,
+  PIECES: any,
+  success: any
+) => {
+  canvasRef.current.addEventListener("mousedown", (e: any) =>
+    onMouseDown(e, helperContextRef, selectedPiece, PIECES)
+  );
+  canvasRef.current.addEventListener("mousemove", (e: any) =>
+    onMouseMove(e, selectedPiece)
+  );
+  canvasRef.current.addEventListener("mouseup", () =>
+    onMouseUp(selectedPiece, PIECES, success)
+  );
+
+  canvasRef.current.addEventListener("touchstart", (e: any) =>
+    onTouchStart(e, helperContextRef, selectedPiece, PIECES)
+  );
+  canvasRef.current.addEventListener("touchmove", (e: any) =>
+    onTouchMove(e, selectedPiece)
+  );
+  canvasRef.current.addEventListener("touchend", () =>
+    onTouchEnd(selectedPiece, PIECES, success)
+  );
+};
+
 export const handleResizer = (
   canvasRef: any,
   helperCanvasRef: any,
@@ -110,6 +216,195 @@ export const getDifficulty = (level: string) => {
 
     default:
       return { row: 4, column: 4 };
+  }
+};
+
+export const initializePieces = (
+  rows: number,
+  columns: any,
+  topButtonsRef: any,
+  sizeRef: any,
+  PIECES: any
+) => {
+  topButtonsRef.current.style.display = "none";
+  sizeRef.current.rows = rows;
+  sizeRef.current.columns = columns;
+
+  PIECES.current = [];
+  let uniqueRandomColors: any = [];
+  let id = 1;
+  for (let i = 0; i < sizeRef.current.rows; i++) {
+    for (let j = 0; j < sizeRef.current.columns; j++) {
+      let color = getRandomColor();
+      while (uniqueRandomColors.includes(color)) {
+        color = getRandomColor();
+      }
+      PIECES.current.push(new Piece(id, i, j, sizeRef.current, color));
+      id++;
+    }
+  }
+
+  let cnt = 0;
+  for (let i = 0; i < sizeRef.current.rows; i++) {
+    for (let j = 0; j < sizeRef.current.columns; j++) {
+      const piece = PIECES.current[cnt];
+
+      if (i === sizeRef.current.rows - 1) {
+        piece.bottom = null;
+      } else {
+        const sgn = Math.random() - 0.5 < 0 ? -1 : 1;
+        piece.bottom = sgn * (Math.random() * 0.4 + 0.3);
+      }
+
+      if (j === sizeRef.current.columns - 1) {
+        piece.right = null;
+      } else {
+        const sgn = Math.random() - 0.5 < 0 ? -1 : 1;
+        piece.right = sgn * (Math.random() * 0.4 + 0.3);
+      }
+
+      if (j === 0) {
+        piece.left = null;
+      } else {
+        piece.left = -PIECES.current[cnt - 1].right;
+      }
+
+      if (i === 0) {
+        piece.top = null;
+      } else {
+        piece.top = -PIECES.current[cnt - sizeRef.current.columns].bottom;
+      }
+
+      cnt++;
+    }
+  }
+};
+
+export const restart = (
+  PIECES: any,
+  canvasRef: any,
+  mainContainerRef: any,
+  topButtonsRef: any,
+  itemsRef: any
+) => {
+  randomizePieces(PIECES.current, canvasRef.current, mainContainerRef.current);
+
+  itemsRef.current.style.display = "none";
+  topButtonsRef.current.style.display = "flex";
+};
+
+export const updateCanvas = (
+  contextRef: any,
+  canvasRef: any,
+  helperContextRef: any,
+  helperCanvasRef: any,
+  imgRef: any,
+  sizeRef: any,
+  PIECES: any
+) => {
+  contextRef.current.clearRect(
+    0,
+    0,
+    canvasRef.current.width,
+    canvasRef.current.height
+  );
+
+  helperContextRef.current.clearRect(
+    0,
+    0,
+    helperCanvasRef.current.width,
+    helperCanvasRef.current.height
+  );
+
+  contextRef.current.globalAlpha = 0.5;
+
+  contextRef.current.drawImage(
+    imgRef.current,
+    sizeRef.current.x,
+    sizeRef.current.y,
+    sizeRef.current.width,
+    sizeRef.current.height
+  );
+
+  contextRef.current.globalAlpha = 1;
+
+  for (let i = 0; i < PIECES.current.length; i++) {
+    PIECES.current[i].draw(contextRef.current, imgRef.current, sizeRef.current);
+    PIECES.current[i].draw(
+      helperContextRef.current,
+      imgRef.current,
+      sizeRef.current,
+      false
+    );
+  }
+  requestAnimationFrame(() => {
+    updateCanvas(
+      contextRef,
+      canvasRef,
+      helperContextRef,
+      helperCanvasRef,
+      imgRef,
+      sizeRef,
+      PIECES
+    );
+  });
+};
+
+export const fileChangedHandler = (
+  event: any,
+  canvasRef: any,
+  helperCanvasRef: any,
+  scaler: number,
+  sizeRef: any,
+  imgRef: any,
+  topButtonsRef: any,
+  PIECES: any,
+  contextRef: any,
+  helperContextRef: any,
+  imgUrl: any
+) => {
+  if (event.target.files[0]) {
+    try {
+      Resizer.imageFileResizer(
+        event.target.files[0],
+        300,
+        330,
+        "JPEG",
+        100,
+        0,
+        (uri) => {
+          imgUrl.current = uri;
+          handleResizer(
+            canvasRef.current,
+            helperCanvasRef.current,
+            scaler,
+            sizeRef.current,
+            imgRef.current
+          );
+          initializePieces(
+            sizeRef.current.rows,
+            sizeRef.current.columns,
+            topButtonsRef,
+            sizeRef,
+            PIECES
+          );
+          updateCanvas(
+            contextRef,
+            canvasRef,
+            helperContextRef,
+            helperCanvasRef,
+            imgRef,
+            sizeRef,
+            PIECES
+          );
+        },
+        "base64",
+        300,
+        330
+      );
+    } catch (err) {
+      console.log(err);
+    }
   }
 };
 

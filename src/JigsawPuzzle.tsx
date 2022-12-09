@@ -1,12 +1,9 @@
-import React, { useEffect, useRef, useCallback, useState } from "react";
-import Resizer from "react-image-file-resizer";
+import React, { useEffect, useRef } from "react";
 import {
   handleResizer,
-  getRandomColor,
-  randomizePieces,
-  getPressedPieceByColor,
-  isComplete,
-  getDifficulty,
+  addEventListeners,
+  initializePieces,
+  updateCanvas,
 } from "./helperFunctions";
 import Piece from "./Piece";
 import ControlButtons from "./components/ControlButtons";
@@ -25,8 +22,10 @@ const CamPuzzle = () => {
   const mainContainerRef = useRef<any>();
   const contextRef = useRef<any>();
   const helperContextRef = useRef<any>();
-  const PIECES = useRef<any[]>([]);
+  const imgUrl = useRef<any>();
+  const PIECES = useRef<Piece[]>([]);
   const selectedPiece = useRef<any>(null);
+  const success = useRef<boolean>(false);
   const topButtonsRef = useRef<any>();
   const sizeRef = useRef<any>({
     x: 0,
@@ -37,238 +36,20 @@ const CamPuzzle = () => {
     columns: 2,
   });
 
-  const [success, setSuccess] = useState<boolean>(false);
-  const [imgUrl, setImgUrl] = useState<any>();
-
   const scaler = 0.8;
-
-  const onMouseDown = useCallback((evt: any) => {
-    const imgData = helperContextRef.current.getImageData(evt.x, evt.y, 1, 1);
-    if (imgData.data[3] === 0) {
-      return;
-    }
-
-    const clickedColor = `rgb(${imgData.data[0]},${imgData.data[1]},${imgData.data[2]})`;
-    selectedPiece.current = getPressedPieceByColor(
-      evt,
-      clickedColor,
-      PIECES.current
-    );
-
-    if (selectedPiece.current !== null) {
-      const index = PIECES.current.indexOf(selectedPiece.current);
-      if (index > -1) {
-        PIECES.current.splice(index, 1);
-        PIECES.current.push(selectedPiece.current);
-      }
-      selectedPiece.current.offset = {
-        x: evt.x - selectedPiece.current.x,
-        y: evt.y - selectedPiece.current.y,
-      };
-
-      selectedPiece.current.correct = false;
-    }
-  }, []);
-
-  const onMouseUp = useCallback(() => {
-    if (selectedPiece.current && selectedPiece.current.isClose()) {
-      selectedPiece.current.snap();
-      if (isComplete(PIECES.current)) {
-        setTimeout(() => {
-          completeApplauseAudio.play();
-          setSuccess(true);
-        }, 1000);
-      }
-    }
-    selectedPiece.current = null;
-  }, []);
-
-  const onTouchStart = useCallback(
-    (evt: any) => {
-      let loc = { x: evt.touches[0].clientX, y: evt.touches[0].clientY };
-      onMouseDown(loc);
-    },
-    [onMouseDown]
-  );
-
-  const onTouchMove = useCallback((evt: any) => {
-    let loc = { x: evt.touches[0].clientX, y: evt.touches[0].clientY };
-    onMouseMove(loc);
-  }, []);
-
-  const onTouchEnd = useCallback(() => {
-    onMouseUp();
-  }, [onMouseUp]);
-
-  const onMouseMove = (evt: any) => {
-    if (selectedPiece.current !== null) {
-      selectedPiece.current.x = evt.x - selectedPiece.current.offset.x;
-      selectedPiece.current.y = evt.y - selectedPiece.current.offset.y;
-    }
-  };
-
-  const addEventListeners = useCallback(() => {
-    canvasRef.current.addEventListener("mousedown", onMouseDown);
-    canvasRef.current.addEventListener("mousemove", onMouseMove);
-    canvasRef.current.addEventListener("mouseup", onMouseUp);
-
-    canvasRef.current.addEventListener("touchstart", onTouchStart);
-    canvasRef.current.addEventListener("touchmove", onTouchMove);
-    canvasRef.current.addEventListener("touchend", onTouchEnd);
-  }, [onMouseDown, onMouseUp, onTouchEnd, onTouchMove, onTouchStart]);
-
-  const updateCanvas = useCallback(() => {
-    contextRef.current.clearRect(
-      0,
-      0,
-      canvasRef.current.width,
-      canvasRef.current.height
-    );
-
-    helperContextRef.current.clearRect(
-      0,
-      0,
-      helperCanvasRef.current.width,
-      helperCanvasRef.current.height
-    );
-
-    contextRef.current.globalAlpha = 0.5;
-
-    contextRef.current.drawImage(
-      imgRef.current,
-      sizeRef.current.x,
-      sizeRef.current.y,
-      sizeRef.current.width,
-      sizeRef.current.height
-    );
-
-    contextRef.current.globalAlpha = 1;
-
-    for (let i = 0; i < PIECES.current.length; i++) {
-      PIECES.current[i].draw(
-        contextRef.current,
-        imgRef.current,
-        sizeRef.current
-      );
-      PIECES.current[i].draw(
-        helperContextRef.current,
-        imgRef.current,
-        sizeRef.current,
-        false
-      );
-    }
-    requestAnimationFrame(updateCanvas);
-  }, []);
-
-  const initializePieces = useCallback((rows: number, columns: any) => {
-    topButtonsRef.current.style.display = "none";
-    sizeRef.current.rows = rows;
-    sizeRef.current.columns = columns;
-
-    PIECES.current = [];
-    let uniqueRandomColors: any = [];
-    let id = 1;
-    for (let i = 0; i < sizeRef.current.rows; i++) {
-      for (let j = 0; j < sizeRef.current.columns; j++) {
-        let color = getRandomColor();
-        while (uniqueRandomColors.includes(color)) {
-          color = getRandomColor();
-        }
-        PIECES.current.push(new Piece(id, i, j, sizeRef.current, color));
-        id++;
-      }
-    }
-
-    let cnt = 0;
-    for (let i = 0; i < sizeRef.current.rows; i++) {
-      for (let j = 0; j < sizeRef.current.columns; j++) {
-        const piece = PIECES.current[cnt];
-
-        if (i === sizeRef.current.rows - 1) {
-          piece.bottom = null;
-        } else {
-          const sgn = Math.random() - 0.5 < 0 ? -1 : 1;
-          piece.bottom = sgn * (Math.random() * 0.4 + 0.3);
-        }
-
-        if (j === sizeRef.current.columns - 1) {
-          piece.right = null;
-        } else {
-          const sgn = Math.random() - 0.5 < 0 ? -1 : 1;
-          piece.right = sgn * (Math.random() * 0.4 + 0.3);
-        }
-
-        if (j === 0) {
-          piece.left = null;
-        } else {
-          piece.left = -PIECES.current[cnt - 1].right;
-        }
-
-        if (i === 0) {
-          piece.top = null;
-        } else {
-          piece.top = -PIECES.current[cnt - sizeRef.current.columns].bottom;
-        }
-
-        cnt++;
-      }
-    }
-  }, []);
-
-  const setDifficulty = (e: any) => {
-    const temp = getDifficulty(e.target.value);
-    initializePieces(temp.row, temp.column);
-  };
-
-  const restart = () => {
-    randomizePieces(
-      PIECES.current,
-      canvasRef.current,
-      mainContainerRef.current
-    );
-
-    itemsRef.current.style.display = "none";
-    topButtonsRef.current.style.display = "flex";
-  };
-
-  const fileChangedHandler = (event: any) => {
-    if (event.target.files[0]) {
-      try {
-        Resizer.imageFileResizer(
-          event.target.files[0],
-          300,
-          330,
-          "JPEG",
-          100,
-          0,
-          (uri) => {
-            setImgUrl(uri);
-            handleResizer(
-              canvasRef.current,
-              helperCanvasRef.current,
-              scaler,
-              sizeRef.current,
-              imgRef.current
-            );
-            initializePieces(sizeRef.current.rows, sizeRef.current.columns);
-            updateCanvas();
-          },
-          "base64",
-          300,
-          330
-        );
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
 
   useEffect(() => {
     if (!contextRef.current && !helperContextRef.current) {
       contextRef.current = canvasRef.current.getContext("2d");
       helperContextRef.current = helperCanvasRef.current.getContext("2d");
     }
-    addEventListeners();
+    addEventListeners(
+      canvasRef,
+      helperContextRef,
+      selectedPiece,
+      PIECES,
+      success
+    );
 
     if (imgRef.current) {
       handleResizer(
@@ -278,20 +59,35 @@ const CamPuzzle = () => {
         sizeRef.current,
         imgRef.current
       );
-      initializePieces(sizeRef.current.rows, sizeRef.current.columns);
-      updateCanvas();
+      initializePieces(
+        sizeRef.current.rows,
+        sizeRef.current.columns,
+        topButtonsRef,
+        sizeRef,
+        PIECES
+      );
+      updateCanvas(
+        contextRef,
+        canvasRef,
+        helperContextRef,
+        helperCanvasRef,
+        imgRef,
+        sizeRef,
+        PIECES
+      );
     }
     itemsRef.current.style.display = "block";
-  }, [updateCanvas, addEventListeners, initializePieces]);
+  }, []);
 
   return (
     <div className="mainContainer" ref={mainContainerRef}>
       <ControlButtons
         topButtonsRef={topButtonsRef}
-        itemsRef={itemsRef.current}
-        sizeRef={sizeRef.current}
-        restart={restart}
-        initializePieces={initializePieces}
+        itemsRef={itemsRef}
+        sizeRef={sizeRef}
+        PIECES={PIECES}
+        canvasRef={canvasRef}
+        mainContainerRef={mainContainerRef}
       />
       <CanvasImage
         canvasRef={canvasRef}
@@ -301,15 +97,22 @@ const CamPuzzle = () => {
       />
       <MenuModal
         itemsRef={itemsRef}
-        setDifficulty={setDifficulty}
-        fileChangedHandler={fileChangedHandler}
-        restart={restart}
+        sizeRef={sizeRef}
+        topButtonsRef={topButtonsRef}
+        PIECES={PIECES}
+        canvasRef={canvasRef}
+        helperCanvasRef={helperCanvasRef}
+        scaler={scaler}
+        imgRef={imgRef}
+        contextRef={contextRef}
+        helperContextRef={helperContextRef}
+        mainContainerRef={mainContainerRef}
+        imgUrl={imgUrl}
       />
       <SuccessModal
         success={success}
         itemsRef={itemsRef.current}
         topButtonsRef={topButtonsRef.current}
-        setSuccess={setSuccess}
       />
     </div>
   );

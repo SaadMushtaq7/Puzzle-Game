@@ -1,30 +1,44 @@
 import React, { FC } from "react";
+import { restart, initializePieces } from "../helperFunctions";
 
 interface controlButtonProps {
   topButtonsRef: any;
   itemsRef: any;
   sizeRef: any;
-  restart: any;
-  initializePieces: any;
+  PIECES: any;
+  canvasRef: any;
+  mainContainerRef: any;
 }
 
 const ControlButtons: FC<controlButtonProps> = ({
   topButtonsRef,
   itemsRef,
   sizeRef,
-  restart,
-  initializePieces,
+  PIECES,
+  canvasRef,
+  mainContainerRef,
 }) => {
   return (
     <div className="topButtons" ref={topButtonsRef}>
-      <button onClick={restart} className="startAgainBtn">
+      <button
+        onClick={() =>
+          restart(PIECES, canvasRef, mainContainerRef, topButtonsRef, itemsRef)
+        }
+        className="startAgainBtn"
+      >
         Play Again
       </button>
 
       <button
         onClick={() => {
-          itemsRef.style.display = "block";
-          initializePieces(sizeRef.rows, sizeRef.columns);
+          itemsRef.current.style.display = "block";
+          initializePieces(
+            sizeRef.current.rows,
+            sizeRef.current.columns,
+            topButtonsRef,
+            sizeRef,
+            PIECES
+          );
         }}
         className="newGameBtn"
       >

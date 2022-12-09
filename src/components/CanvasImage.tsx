@@ -4,7 +4,7 @@ interface canvasImageProps {
   canvasRef: any;
   helperCanvasRef: any;
   imgRef: any;
-  imgUrl: string;
+  imgUrl: any;
 }
 
 const CanvasImage: FC<canvasImageProps> = ({
@@ -19,7 +19,7 @@ const CanvasImage: FC<canvasImageProps> = ({
       <canvas ref={helperCanvasRef} style={{ display: "none" }} />
       <img
         ref={imgRef}
-        src={imgUrl ? imgUrl : "/images/backupPuzzle.jpg"}
+        src={imgUrl.current ? imgUrl.current : "/images/backupPuzzle.jpg"}
         alt="Puzzle display"
       />
     </>
