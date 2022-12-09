@@ -21,7 +21,7 @@ export const handleResizer = (
       window.innerHeight / imgRef.height || 530
     );
 
-  sizeRef.width = resizer * imgRef.width || 300;
+  sizeRef.width = resizer * imgRef.width || 350;
   sizeRef.height = resizer * imgRef.height || 530;
   sizeRef.x = window.innerWidth / 2 - sizeRef.width / 2;
   sizeRef.y = window.innerHeight / 2 - sizeRef.height / 2;
@@ -35,11 +35,7 @@ export const getRandomColor = () => {
   return `rgb(${red},${green},${blue})`;
 };
 
-export const randomizePieces = (
-  PIECES: any,
-  canvasRef: any,
-  mainContainerRef: any
-) => {
+export const randomizePieces = (PIECES: any, canvasRef: any) => {
   for (let i = 0; i < PIECES.length; i++) {
     let loc = {
       x: Math.random() * (canvasRef.width - PIECES[i].width),
@@ -162,7 +158,7 @@ export const restart = (
   topButtonsRef: any,
   itemsRef: any
 ) => {
-  randomizePieces(PIECES.current, canvasRef.current, mainContainerRef.current);
+  randomizePieces(PIECES.current, canvasRef.current);
 
   itemsRef.current.style.display = "none";
   topButtonsRef.current.style.display = "flex";

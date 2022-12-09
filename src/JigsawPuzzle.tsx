@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   handleResizer,
   initializePieces,
@@ -25,7 +25,6 @@ const CamPuzzle = () => {
   const imgUrl = useRef<any>("/images/backupPuzzle.jpg");
   const PIECES = useRef<Piece[]>([]);
   const selectedPiece = useRef<any>(null);
-  const success = useRef<any>(false);
   const topButtonsRef = useRef<any>();
   const sizeRef = useRef<any>({
     x: 0,
@@ -36,8 +35,9 @@ const CamPuzzle = () => {
     columns: 2,
   });
 
-  const scaler = 0.8;
+  const [success, setSuccess] = useState<boolean>(false);
 
+  const scaler = 0.8;
   useEffect(() => {
     if (!contextRef.current && !helperContextRef.current) {
       contextRef.current = canvasRef.current.getContext("2d");
@@ -48,7 +48,7 @@ const CamPuzzle = () => {
       helperContextRef,
       selectedPiece,
       PIECES,
-      success
+      setSuccess
     );
 
     if (imgRef.current) {
@@ -78,17 +78,18 @@ const CamPuzzle = () => {
     }
     itemsRef.current.style.display = "block";
   }, []);
-
   return (
     <div className="mainContainer" ref={mainContainerRef}>
-      <ControlButtons
-        topButtonsRef={topButtonsRef}
-        itemsRef={itemsRef}
-        sizeRef={sizeRef}
-        PIECES={PIECES}
-        canvasRef={canvasRef}
-        mainContainerRef={mainContainerRef}
-      />
+      <div ref={topButtonsRef} className="topButtons">
+        <ControlButtons
+          topButtonsRef={topButtonsRef}
+          itemsRef={itemsRef}
+          sizeRef={sizeRef}
+          PIECES={PIECES}
+          canvasRef={canvasRef}
+          mainContainerRef={mainContainerRef}
+        />
+      </div>
       <CanvasImage
         canvasRef={canvasRef}
         helperCanvasRef={helperCanvasRef}
@@ -111,6 +112,7 @@ const CamPuzzle = () => {
       />
       <SuccessModal
         success={success}
+        setSuccess={setSuccess}
         itemsRef={itemsRef}
         topButtonsRef={topButtonsRef}
       />

@@ -19,7 +19,7 @@ const ControlButtons: FC<controlButtonProps> = ({
   mainContainerRef,
 }) => {
   return (
-    <div className="topButtons" ref={topButtonsRef}>
+    <div>
       <button
         onClick={() =>
           restart(PIECES, canvasRef, mainContainerRef, topButtonsRef, itemsRef)

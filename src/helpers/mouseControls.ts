@@ -74,22 +74,29 @@ const onTouchMove = (evt: any, selectedPiece: any) => {
   onMouseMove(loc, selectedPiece);
 };
 
-const onMouseUp = (selectedPiece: any, PIECES: any, success: any) => {
+const onMouseUp = (
+  selectedPiece: any,
+  PIECES: any,
+  setSuccess: React.Dispatch<React.SetStateAction<boolean>>
+) => {
   if (selectedPiece.current && selectedPiece.current.isClose()) {
     selectedPiece.current.snap();
     if (isComplete(PIECES.current)) {
       setTimeout(() => {
         completeApplauseAudio.play();
-        success.current = true;
-        console.log(success);
+        setSuccess(true);
       }, 500);
     }
   }
   selectedPiece.current = null;
 };
 
-const onTouchEnd = (selectedPiece: any, PIECES: any, success: any) => {
-  onMouseUp(selectedPiece, PIECES, success);
+const onTouchEnd = (
+  selectedPiece: any,
+  PIECES: any,
+  setSuccess: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  onMouseUp(selectedPiece, PIECES, setSuccess);
 };
 
 export const addEventListeners = (
@@ -97,7 +104,7 @@ export const addEventListeners = (
   helperContextRef: any,
   selectedPiece: any,
   PIECES: any,
-  success: any
+  setSuccess: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   canvasRef.current.addEventListener("mousedown", (e: any) =>
     onMouseDown(e, helperContextRef, selectedPiece, PIECES)
@@ -106,7 +113,7 @@ export const addEventListeners = (
     onMouseMove(e, selectedPiece)
   );
   canvasRef.current.addEventListener("mouseup", () =>
-    onMouseUp(selectedPiece, PIECES, success)
+    onMouseUp(selectedPiece, PIECES, setSuccess)
   );
 
   canvasRef.current.addEventListener("touchstart", (e: any) =>
@@ -116,6 +123,6 @@ export const addEventListeners = (
     onTouchMove(e, selectedPiece)
   );
   canvasRef.current.addEventListener("touchend", () =>
-    onTouchEnd(selectedPiece, PIECES, success)
+    onTouchEnd(selectedPiece, PIECES, setSuccess)
   );
 };

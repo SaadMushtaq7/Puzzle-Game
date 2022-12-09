@@ -3,25 +3,29 @@ import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 
 interface successModalProps {
-  success: any;
+  success: boolean;
+  setSuccess: React.Dispatch<React.SetStateAction<boolean>>;
   itemsRef: any;
   topButtonsRef: any;
 }
 
 const SuccessModal: FC<successModalProps> = ({
   success,
+  setSuccess,
   itemsRef,
   topButtonsRef,
 }) => {
+  const closeModalHandler = () => {
+    itemsRef.current.style.display = "block";
+    setSuccess(false);
+    topButtonsRef.current.style.display = "none";
+  };
+
   return (
     <Popup
       modal
-      open={success.current}
-      onClose={() => {
-        itemsRef.current.style.display = "block";
-        topButtonsRef.curent.style.display = "none";
-        success.current = false;
-      }}
+      open={success}
+      onClose={closeModalHandler}
       position="right center"
     >
       <div className="modal">
