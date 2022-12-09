@@ -6,7 +6,7 @@ import {
   getDifficulty,
   initializePieces,
   fileChangedHandler,
-} from "../helperFunctions";
+} from "../helpers/canvasManipulation";
 interface menuModalProps {
   itemsRef: any;
   sizeRef: any;

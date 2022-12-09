@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import {
   handleResizer,
-  addEventListeners,
   initializePieces,
   updateCanvas,
-} from "./helperFunctions";
+} from "./helpers/canvasManipulation";
+import { addEventListeners } from "./helpers/mouseControls";
 import Piece from "./Piece";
 import ControlButtons from "./components/ControlButtons";
 import MenuModal from "./components/MenuModal";
@@ -22,10 +22,10 @@ const CamPuzzle = () => {
   const mainContainerRef = useRef<any>();
   const contextRef = useRef<any>();
   const helperContextRef = useRef<any>();
-  const imgUrl = useRef<any>();
+  const imgUrl = useRef<any>("/images/backupPuzzle.jpg");
   const PIECES = useRef<Piece[]>([]);
   const selectedPiece = useRef<any>(null);
-  const success = useRef<boolean>(false);
+  const success = useRef<any>(false);
   const topButtonsRef = useRef<any>();
   const sizeRef = useRef<any>({
     x: 0,
@@ -111,8 +111,8 @@ const CamPuzzle = () => {
       />
       <SuccessModal
         success={success}
-        itemsRef={itemsRef.current}
-        topButtonsRef={topButtonsRef.current}
+        itemsRef={itemsRef}
+        topButtonsRef={topButtonsRef}
       />
     </div>
   );

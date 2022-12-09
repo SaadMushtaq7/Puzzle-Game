@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { restart, initializePieces } from "../helperFunctions";
+import { restart, initializePieces } from "../helpers/canvasManipulation";
 
 interface controlButtonProps {
   topButtonsRef: any;

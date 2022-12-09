@@ -3,7 +3,7 @@ import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 
 interface successModalProps {
-  success: React.MutableRefObject<boolean>;
+  success: any;
   itemsRef: any;
   topButtonsRef: any;
 }
@@ -18,8 +18,8 @@ const SuccessModal: FC<successModalProps> = ({
       modal
       open={success.current}
       onClose={() => {
-        itemsRef.style.display = "block";
-        topButtonsRef.style.display = "none";
+        itemsRef.current.style.display = "block";
+        topButtonsRef.curent.style.display = "none";
         success.current = false;
       }}
       position="right center"

@@ -17,11 +17,7 @@ const CanvasImage: FC<canvasImageProps> = ({
     <>
       <canvas ref={canvasRef} width="500px" />
       <canvas ref={helperCanvasRef} style={{ display: "none" }} />
-      <img
-        ref={imgRef}
-        src={imgUrl.current ? imgUrl.current : "/images/backupPuzzle.jpg"}
-        alt="Puzzle display"
-      />
+      <img ref={imgRef} src={imgUrl.current} alt="Puzzle display" />
     </>
   );
 };
