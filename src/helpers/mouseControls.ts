@@ -26,6 +26,7 @@ const onMouseDown = (
   PIECES: any
 ) => {
   const imgData = helperContextRef.current.getImageData(evt.x, evt.y, 1, 1);
+
   if (imgData.data[3] === 0) {
     return;
   }
@@ -39,6 +40,7 @@ const onMouseDown = (
 
   if (selectedPiece.current !== null) {
     const index = PIECES.current.indexOf(selectedPiece.current);
+
     if (index > -1) {
       PIECES.current.splice(index, 1);
       PIECES.current.push(selectedPiece.current);

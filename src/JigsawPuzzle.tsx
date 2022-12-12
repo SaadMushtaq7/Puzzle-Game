@@ -39,8 +39,8 @@ const CamPuzzle = () => {
     y: 0,
     width: 0,
     height: 0,
-    rows: 2,
-    columns: 2,
+    rows: 3,
+    columns: 3,
   });
 
   const [success, setSuccess] = useState<boolean>(false);
@@ -49,8 +49,12 @@ const CamPuzzle = () => {
   const scaler = 0.8;
   useEffect(() => {
     if (!contextRef.current && !helperContextRef.current) {
-      contextRef.current = canvasRef.current?.getContext("2d");
-      helperContextRef.current = helperCanvasRef.current?.getContext("2d");
+      contextRef.current = canvasRef.current?.getContext("2d", {
+        willReadFrequently: true,
+      });
+      helperContextRef.current = helperCanvasRef.current?.getContext("2d", {
+        willReadFrequently: true,
+      });
     }
     addEventListeners(
       canvasRef,
@@ -61,7 +65,14 @@ const CamPuzzle = () => {
     );
 
     if (imgRef.current) {
-      handleResizer(canvasRef, helperCanvasRef, scaler, sizeRef, imgRef);
+      handleResizer(
+        canvasRef,
+        helperCanvasRef,
+        scaler,
+        sizeRef,
+        imgRef,
+        mainContainerRef
+      );
       initializePieces(
         sizeRef.current.rows,
         sizeRef.current.columns,

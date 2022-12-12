@@ -7,9 +7,14 @@ export const handleResizer = (
   helperCanvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
   scaler: number,
   sizeRef: React.MutableRefObject<sizeRefType>,
-  imgRef: any
+  imgRef: any,
+  mainContainerRef: React.MutableRefObject<HTMLDivElement | null>
 ) => {
-  if (canvasRef.current && helperCanvasRef.current) {
+  if (
+    canvasRef.current &&
+    helperCanvasRef.current &&
+    mainContainerRef.current
+  ) {
     canvasRef.current.width = window.innerWidth;
     canvasRef.current.height = window.innerHeight;
 
@@ -19,12 +24,12 @@ export const handleResizer = (
     let resizer =
       scaler *
       Math.min(
-        window.innerWidth / imgRef.current.width || 350,
-        window.innerHeight / imgRef.current.height || 530
+        mainContainerRef.current.offsetWidth / 300,
+        mainContainerRef.current.offsetHeight / 320
       );
 
-    sizeRef.current.width = resizer * imgRef.current.width || 350;
-    sizeRef.current.height = resizer * imgRef.current.height || 530;
+    sizeRef.current.width = resizer * 300;
+    sizeRef.current.height = resizer * 320;
     sizeRef.current.x = window.innerWidth / 2 - sizeRef.current.width / 2;
     sizeRef.current.y = window.innerHeight / 2 - sizeRef.current.height / 2;
   }
@@ -44,7 +49,7 @@ export const randomizePieces = (PIECES: any, mainContainerRef: any) => {
       x:
         Math.random() *
           (mainContainerRef.current.clientWidth - PIECES.current[i].width) +
-        window.innerWidth / 3.5,
+        window.innerWidth / 4,
       y:
         Math.random() *
           (mainContainerRef.current.clientHeight - PIECES.current[i].height) +
@@ -250,20 +255,28 @@ export const fileChangedHandler = (
   PIECES: any,
   contextRef: any,
   helperContextRef: any,
-  setImgUrl: React.Dispatch<any>
+  setImgUrl: React.Dispatch<any>,
+  mainContainerRef: React.MutableRefObject<HTMLDivElement | null>
 ) => {
   if (event.target.files[0]) {
     try {
       Resizer.imageFileResizer(
         event.target.files[0],
         300,
-        330,
+        350,
         "JPEG",
         100,
         0,
         (uri) => {
           setImgUrl(uri);
-          handleResizer(canvasRef, helperCanvasRef, scaler, sizeRef, imgRef);
+          handleResizer(
+            canvasRef,
+            helperCanvasRef,
+            scaler,
+            sizeRef,
+            imgRef,
+            mainContainerRef
+          );
           initializePieces(
             sizeRef.current.rows,
             sizeRef.current.columns,
@@ -283,7 +296,7 @@ export const fileChangedHandler = (
         },
         "base64",
         300,
-        330
+        350
       );
     } catch (err) {
       console.log(err);

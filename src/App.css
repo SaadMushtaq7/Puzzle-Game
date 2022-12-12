@@ -10,9 +10,9 @@ body{
 img{
   display: none;
 }
- 
+
 .appContainer{
-  max-width: 500px;
+  max-width: 450px;
   width: 100%;
   position: absolute;
   top: 50%;

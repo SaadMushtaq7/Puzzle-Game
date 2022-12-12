@@ -1,13 +1,15 @@
 import React, { FC } from "react";
 import { restart, initializePieces } from "../helpers/canvasManipulation";
+import { sizeRefType } from "../JigsawPuzzle";
+import Piece from "../Piece";
 
 interface controlButtonProps {
-  topButtonsRef: any;
-  itemsRef: any;
-  sizeRef: any;
-  PIECES: any;
-  canvasRef: any;
-  mainContainerRef: any;
+  topButtonsRef: React.MutableRefObject<HTMLDivElement | null>;
+  itemsRef: React.MutableRefObject<HTMLDivElement | null>;
+  sizeRef: React.MutableRefObject<sizeRefType>;
+  PIECES: React.MutableRefObject<Piece[]>;
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
+  mainContainerRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 const ControlButtons: FC<controlButtonProps> = ({
@@ -31,14 +33,16 @@ const ControlButtons: FC<controlButtonProps> = ({
 
       <button
         onClick={() => {
-          itemsRef.current.style.display = "block";
-          initializePieces(
-            sizeRef.current.rows,
-            sizeRef.current.columns,
-            topButtonsRef,
-            sizeRef,
-            PIECES
-          );
+          if (itemsRef.current) {
+            itemsRef.current.style.display = "block";
+            initializePieces(
+              sizeRef.current.rows,
+              sizeRef.current.columns,
+              topButtonsRef,
+              sizeRef,
+              PIECES
+            );
+          }
         }}
         className="newGameBtn"
       >
