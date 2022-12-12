@@ -7,19 +7,21 @@ import {
   initializePieces,
   fileChangedHandler,
 } from "../helpers/canvasManipulation";
+import { sizeRefType } from "../JigsawPuzzle";
+import Piece from "../Piece";
 interface menuModalProps {
-  itemsRef: any;
-  sizeRef: any;
-  topButtonsRef: any;
-  PIECES: any;
-  canvasRef: any;
-  helperCanvasRef: any;
+  itemsRef: React.MutableRefObject<HTMLDivElement | null>;
+  sizeRef: React.MutableRefObject<sizeRefType>;
+  topButtonsRef: React.MutableRefObject<HTMLDivElement | null>;
+  PIECES: React.MutableRefObject<Piece[]>;
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
+  helperCanvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
   scaler: number;
   imgRef: any;
   contextRef: any;
   helperContextRef: any;
-  mainContainerRef: any;
-  imgUrl: any;
+  mainContainerRef: React.MutableRefObject<HTMLDivElement | null>;
+  setImgUrl: React.Dispatch<any>;
 }
 
 const MenuModal: FC<menuModalProps> = ({
@@ -34,7 +36,8 @@ const MenuModal: FC<menuModalProps> = ({
   contextRef,
   helperContextRef,
   mainContainerRef,
-  imgUrl,
+
+  setImgUrl,
 }) => {
   const difficultyHandler = (e: any) => {
     const temp = getDifficulty(e.target.value);
@@ -88,8 +91,7 @@ const MenuModal: FC<menuModalProps> = ({
             PIECES,
             contextRef,
             helperContextRef,
-            imgUrl,
-            mainContainerRef
+            setImgUrl
           )
         }
       />

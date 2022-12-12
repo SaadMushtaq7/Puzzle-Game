@@ -1,30 +1,33 @@
 import Piece from "../Piece";
 import Resizer from "react-image-file-resizer";
+import { sizeRefType } from "../JigsawPuzzle";
 
 export const handleResizer = (
-  canvasRef: any,
-  helperCanvasRef: any,
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
+  helperCanvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
   scaler: number,
-  sizeRef: any,
+  sizeRef: React.MutableRefObject<sizeRefType>,
   imgRef: any
 ) => {
-  canvasRef.current.width = window.innerWidth;
-  canvasRef.current.height = window.innerHeight;
+  if (canvasRef.current && helperCanvasRef.current) {
+    canvasRef.current.width = window.innerWidth;
+    canvasRef.current.height = window.innerHeight;
 
-  helperCanvasRef.current.width = window.innerWidth;
-  helperCanvasRef.current.height = window.innerHeight;
+    helperCanvasRef.current.width = window.innerWidth;
+    helperCanvasRef.current.height = window.innerHeight;
 
-  let resizer =
-    scaler *
-    Math.min(
-      window.innerWidth / imgRef.current.width || 350,
-      window.innerHeight / imgRef.current.height || 530
-    );
+    let resizer =
+      scaler *
+      Math.min(
+        window.innerWidth / imgRef.current.width || 350,
+        window.innerHeight / imgRef.current.height || 530
+      );
 
-  sizeRef.current.width = resizer * imgRef.current.width || 350;
-  sizeRef.current.height = resizer * imgRef.current.height || 530;
-  sizeRef.current.x = window.innerWidth / 2 - sizeRef.current.width / 2;
-  sizeRef.current.y = window.innerHeight / 2 - sizeRef.current.height / 2;
+    sizeRef.current.width = resizer * imgRef.current.width || 350;
+    sizeRef.current.height = resizer * imgRef.current.height || 530;
+    sizeRef.current.x = window.innerWidth / 2 - sizeRef.current.width / 2;
+    sizeRef.current.y = window.innerHeight / 2 - sizeRef.current.height / 2;
+  }
 };
 
 export const getRandomColor = () => {
@@ -36,13 +39,12 @@ export const getRandomColor = () => {
 };
 
 export const randomizePieces = (PIECES: any, mainContainerRef: any) => {
-  console.log(window.innerWidth);
   for (let i = 0; i < PIECES.current.length; i++) {
     let loc = {
       x:
         Math.random() *
           (mainContainerRef.current.clientWidth - PIECES.current[i].width) +
-        window.innerWidth / 6,
+        window.innerWidth / 3.5,
       y:
         Math.random() *
           (mainContainerRef.current.clientHeight - PIECES.current[i].height) +
@@ -100,17 +102,19 @@ export const getDifficulty = (level: string) => {
 
 export const initializePieces = (
   rows: number,
-  columns: any,
-  topButtonsRef: any,
-  sizeRef: any,
-  PIECES: any
+  columns: number,
+  topButtonsRef: React.MutableRefObject<HTMLDivElement | null>,
+  sizeRef: React.MutableRefObject<sizeRefType>,
+  PIECES: React.MutableRefObject<Piece[]>
 ) => {
-  topButtonsRef.current.style.display = "none";
+  if (topButtonsRef.current) {
+    topButtonsRef.current.style.display = "none";
+  }
   sizeRef.current.rows = rows;
   sizeRef.current.columns = columns;
 
   PIECES.current = [];
-  let uniqueRandomColors: any = [];
+  let uniqueRandomColors: string[] = [];
   let id = 1;
   for (let i = 0; i < sizeRef.current.rows; i++) {
     for (let j = 0; j < sizeRef.current.columns; j++) {
@@ -174,59 +178,65 @@ export const restart = (
 
 export const updateCanvas = (
   contextRef: any,
-  canvasRef: any,
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
   helperContextRef: any,
-  helperCanvasRef: any,
+  helperCanvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
   imgRef: any,
-  sizeRef: any,
-  PIECES: any
+  sizeRef: React.MutableRefObject<sizeRefType>,
+  PIECES: React.MutableRefObject<Piece[]>
 ) => {
-  contextRef.current.clearRect(
-    0,
-    0,
-    canvasRef.current.width,
-    canvasRef.current.height
-  );
+  if (canvasRef.current && helperCanvasRef.current) {
+    contextRef.current.clearRect(
+      0,
+      0,
+      canvasRef.current.width,
+      canvasRef.current.height
+    );
 
-  helperContextRef.current.clearRect(
-    0,
-    0,
-    helperCanvasRef.current.width,
-    helperCanvasRef.current.height
-  );
+    helperContextRef.current.clearRect(
+      0,
+      0,
+      helperCanvasRef.current.width,
+      helperCanvasRef.current.height
+    );
 
-  contextRef.current.globalAlpha = 0.5;
+    contextRef.current.globalAlpha = 0.5;
 
-  contextRef.current.drawImage(
-    imgRef.current,
-    sizeRef.current.x,
-    sizeRef.current.y,
-    sizeRef.current.width,
-    sizeRef.current.height
-  );
-
-  contextRef.current.globalAlpha = 1;
-
-  for (let i = 0; i < PIECES.current.length; i++) {
-    PIECES.current[i].draw(contextRef.current, imgRef.current, sizeRef.current);
-    PIECES.current[i].draw(
-      helperContextRef.current,
+    contextRef.current.drawImage(
       imgRef.current,
-      sizeRef.current,
-      false
+      sizeRef.current.x,
+      sizeRef.current.y,
+      sizeRef.current.width,
+      sizeRef.current.height
     );
+
+    contextRef.current.globalAlpha = 1;
+
+    for (let i = 0; i < PIECES.current.length; i++) {
+      PIECES.current[i].draw(
+        contextRef.current,
+        imgRef.current,
+        sizeRef.current
+      );
+      PIECES.current[i].draw(
+        helperContextRef.current,
+        imgRef.current,
+        sizeRef.current,
+        false
+      );
+    }
+    requestAnimationFrame(() => {
+      updateCanvas(
+        contextRef,
+        canvasRef,
+        helperContextRef,
+        helperCanvasRef,
+        imgRef,
+        sizeRef,
+        PIECES
+      );
+    });
   }
-  requestAnimationFrame(() => {
-    updateCanvas(
-      contextRef,
-      canvasRef,
-      helperContextRef,
-      helperCanvasRef,
-      imgRef,
-      sizeRef,
-      PIECES
-    );
-  });
 };
 
 export const fileChangedHandler = (
@@ -240,8 +250,7 @@ export const fileChangedHandler = (
   PIECES: any,
   contextRef: any,
   helperContextRef: any,
-  imgUrl: any,
-  mainContainerRef: any
+  setImgUrl: React.Dispatch<any>
 ) => {
   if (event.target.files[0]) {
     try {
@@ -253,7 +262,7 @@ export const fileChangedHandler = (
         100,
         0,
         (uri) => {
-          imgUrl.current = uri;
+          setImgUrl(uri);
           handleResizer(canvasRef, helperCanvasRef, scaler, sizeRef, imgRef);
           initializePieces(
             sizeRef.current.rows,

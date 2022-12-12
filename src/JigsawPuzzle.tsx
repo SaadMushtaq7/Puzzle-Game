@@ -11,22 +11,30 @@ import MenuModal from "./components/MenuModal";
 import SuccessModal from "./components/SuccessModal";
 import CanvasImage from "./components/CanvasImage";
 
+export interface sizeRefType {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  rows: number;
+  columns: number;
+}
+
 const completeApplauseAudio = new Audio("/audio/applause.wav");
 completeApplauseAudio.volume = 0.2;
 
 const CamPuzzle = () => {
-  const canvasRef = useRef<any>();
-  const helperCanvasRef = useRef<any>();
-  const imgRef = useRef<any>();
-  const itemsRef = useRef<any>();
-  const mainContainerRef = useRef<any>();
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const helperCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const imgRef = useRef<any>(null);
+  const itemsRef = useRef<HTMLDivElement | null>(null);
+  const mainContainerRef = useRef<HTMLDivElement | null>(null);
   const contextRef = useRef<any>();
   const helperContextRef = useRef<any>();
-  const imgUrl = useRef<any>("/images/backupPuzzle.jpg");
   const PIECES = useRef<Piece[]>([]);
   const selectedPiece = useRef<any>(null);
-  const topButtonsRef = useRef<any>();
-  const sizeRef = useRef<any>({
+  const topButtonsRef = useRef<HTMLDivElement | null>(null);
+  const sizeRef = useRef<sizeRefType>({
     x: 0,
     y: 0,
     width: 0,
@@ -36,12 +44,13 @@ const CamPuzzle = () => {
   });
 
   const [success, setSuccess] = useState<boolean>(false);
+  const [imgUrl, setImgUrl] = useState<any>("/images/backupPuzzle.jpg");
 
   const scaler = 0.8;
   useEffect(() => {
     if (!contextRef.current && !helperContextRef.current) {
-      contextRef.current = canvasRef.current.getContext("2d");
-      helperContextRef.current = helperCanvasRef.current.getContext("2d");
+      contextRef.current = canvasRef.current?.getContext("2d");
+      helperContextRef.current = helperCanvasRef.current?.getContext("2d");
     }
     addEventListeners(
       canvasRef,
@@ -70,8 +79,11 @@ const CamPuzzle = () => {
         PIECES
       );
     }
-    itemsRef.current.style.display = "block";
+    if (itemsRef.current) {
+      itemsRef.current.style.display = "block";
+    }
   }, []);
+
   return (
     <div className="appContainer">
       <div className="mainContainer" ref={mainContainerRef}>
@@ -103,7 +115,7 @@ const CamPuzzle = () => {
           contextRef={contextRef}
           helperContextRef={helperContextRef}
           mainContainerRef={mainContainerRef}
-          imgUrl={imgUrl}
+          setImgUrl={setImgUrl}
         />
         <SuccessModal
           success={success}
