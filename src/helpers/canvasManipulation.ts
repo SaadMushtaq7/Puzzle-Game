@@ -8,23 +8,23 @@ export const handleResizer = (
   sizeRef: any,
   imgRef: any
 ) => {
-  canvasRef.width = window.innerWidth;
-  canvasRef.height = window.innerHeight;
+  canvasRef.current.width = window.innerWidth;
+  canvasRef.current.height = window.innerHeight;
 
-  helperCanvasRef.width = window.innerWidth;
-  helperCanvasRef.height = window.innerHeight;
+  helperCanvasRef.current.width = window.innerWidth;
+  helperCanvasRef.current.height = window.innerHeight;
 
   let resizer =
     scaler *
     Math.min(
-      window.innerWidth / imgRef.width || 350,
-      window.innerHeight / imgRef.height || 530
+      window.innerWidth / imgRef.current.width || 350,
+      window.innerHeight / imgRef.current.height || 530
     );
 
-  sizeRef.width = resizer * imgRef.width || 350;
-  sizeRef.height = resizer * imgRef.height || 530;
-  sizeRef.x = window.innerWidth / 2 - sizeRef.width / 2;
-  sizeRef.y = window.innerHeight / 2 - sizeRef.height / 2;
+  sizeRef.current.width = resizer * imgRef.current.width || 350;
+  sizeRef.current.height = resizer * imgRef.current.height || 530;
+  sizeRef.current.x = window.innerWidth / 2 - sizeRef.current.width / 2;
+  sizeRef.current.y = window.innerHeight / 2 - sizeRef.current.height / 2;
 };
 
 export const getRandomColor = () => {
@@ -35,15 +35,23 @@ export const getRandomColor = () => {
   return `rgb(${red},${green},${blue})`;
 };
 
-export const randomizePieces = (PIECES: any, canvasRef: any) => {
-  for (let i = 0; i < PIECES.length; i++) {
+export const randomizePieces = (PIECES: any, mainContainerRef: any) => {
+  console.log(window.innerWidth);
+  for (let i = 0; i < PIECES.current.length; i++) {
     let loc = {
-      x: Math.random() * (canvasRef.width - PIECES[i].width),
-      y: Math.random() * (canvasRef.height - PIECES[i].height),
+      x:
+        Math.random() *
+          (mainContainerRef.current.clientWidth - PIECES.current[i].width) +
+        window.innerWidth / 6,
+      y:
+        Math.random() *
+          (mainContainerRef.current.clientHeight - PIECES.current[i].height) +
+        50,
     };
-    PIECES[i].x = loc.x;
-    PIECES[i].y = loc.y;
-    PIECES[i].correct = false;
+
+    PIECES.current[i].x = loc.x;
+    PIECES.current[i].y = loc.y;
+    PIECES.current[i].correct = false;
   }
 };
 
@@ -158,7 +166,7 @@ export const restart = (
   topButtonsRef: any,
   itemsRef: any
 ) => {
-  randomizePieces(PIECES.current, canvasRef.current);
+  randomizePieces(PIECES, mainContainerRef);
 
   itemsRef.current.style.display = "none";
   topButtonsRef.current.style.display = "flex";
@@ -232,7 +240,8 @@ export const fileChangedHandler = (
   PIECES: any,
   contextRef: any,
   helperContextRef: any,
-  imgUrl: any
+  imgUrl: any,
+  mainContainerRef: any
 ) => {
   if (event.target.files[0]) {
     try {
@@ -245,13 +254,7 @@ export const fileChangedHandler = (
         0,
         (uri) => {
           imgUrl.current = uri;
-          handleResizer(
-            canvasRef.current,
-            helperCanvasRef.current,
-            scaler,
-            sizeRef.current,
-            imgRef.current
-          );
+          handleResizer(canvasRef, helperCanvasRef, scaler, sizeRef, imgRef);
           initializePieces(
             sizeRef.current.rows,
             sizeRef.current.columns,

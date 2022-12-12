@@ -88,7 +88,8 @@ const MenuModal: FC<menuModalProps> = ({
             PIECES,
             contextRef,
             helperContextRef,
-            imgUrl
+            imgUrl,
+            mainContainerRef
           )
         }
       />

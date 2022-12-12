@@ -10,7 +10,7 @@ body{
 img{
   display: none;
 }
-/* 
+ 
 .appContainer{
   max-width: 500px;
   width: 100%;
@@ -19,12 +19,14 @@ img{
   left: 50%;
   transform: translate(-50%,-50%);
   overflow: hidden;
-} */
+} 
 
 
 
 .mainContainer{
   background: linear-gradient(to bottom, #33ccff 0%, #3366cc 100%);
+  width: 100%;
+  height: 100%;
    overflow: hidden;  
    overscroll-behavior: none;
    display: flex;

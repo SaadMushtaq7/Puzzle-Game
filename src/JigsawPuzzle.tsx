@@ -52,13 +52,7 @@ const CamPuzzle = () => {
     );
 
     if (imgRef.current) {
-      handleResizer(
-        canvasRef.current,
-        helperCanvasRef.current,
-        scaler,
-        sizeRef.current,
-        imgRef.current
-      );
+      handleResizer(canvasRef, helperCanvasRef, scaler, sizeRef, imgRef);
       initializePieces(
         sizeRef.current.rows,
         sizeRef.current.columns,
@@ -79,43 +73,45 @@ const CamPuzzle = () => {
     itemsRef.current.style.display = "block";
   }, []);
   return (
-    <div className="mainContainer" ref={mainContainerRef}>
-      <div ref={topButtonsRef} className="topButtons">
-        <ControlButtons
-          topButtonsRef={topButtonsRef}
+    <div className="appContainer">
+      <div className="mainContainer" ref={mainContainerRef}>
+        <div ref={topButtonsRef} className="topButtons">
+          <ControlButtons
+            topButtonsRef={topButtonsRef}
+            itemsRef={itemsRef}
+            sizeRef={sizeRef}
+            PIECES={PIECES}
+            canvasRef={canvasRef}
+            mainContainerRef={mainContainerRef}
+          />
+        </div>
+        <CanvasImage
+          canvasRef={canvasRef}
+          helperCanvasRef={helperCanvasRef}
+          imgRef={imgRef}
+          imgUrl={imgUrl}
+        />
+        <MenuModal
           itemsRef={itemsRef}
           sizeRef={sizeRef}
+          topButtonsRef={topButtonsRef}
           PIECES={PIECES}
           canvasRef={canvasRef}
+          helperCanvasRef={helperCanvasRef}
+          scaler={scaler}
+          imgRef={imgRef}
+          contextRef={contextRef}
+          helperContextRef={helperContextRef}
           mainContainerRef={mainContainerRef}
+          imgUrl={imgUrl}
+        />
+        <SuccessModal
+          success={success}
+          setSuccess={setSuccess}
+          itemsRef={itemsRef}
+          topButtonsRef={topButtonsRef}
         />
       </div>
-      <CanvasImage
-        canvasRef={canvasRef}
-        helperCanvasRef={helperCanvasRef}
-        imgRef={imgRef}
-        imgUrl={imgUrl}
-      />
-      <MenuModal
-        itemsRef={itemsRef}
-        sizeRef={sizeRef}
-        topButtonsRef={topButtonsRef}
-        PIECES={PIECES}
-        canvasRef={canvasRef}
-        helperCanvasRef={helperCanvasRef}
-        scaler={scaler}
-        imgRef={imgRef}
-        contextRef={contextRef}
-        helperContextRef={helperContextRef}
-        mainContainerRef={mainContainerRef}
-        imgUrl={imgUrl}
-      />
-      <SuccessModal
-        success={success}
-        setSuccess={setSuccess}
-        itemsRef={itemsRef}
-        topButtonsRef={topButtonsRef}
-      />
     </div>
   );
 };

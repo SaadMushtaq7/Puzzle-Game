@@ -3,11 +3,7 @@ import JigsawPuzzle from "./JigsawPuzzle";
 import "./App.css";
 
 const App: FC = () => {
-  return (
-    <div className="appContainer">
-      <JigsawPuzzle />
-    </div>
-  );
+  return <JigsawPuzzle />;
 };
 
 export default App;
